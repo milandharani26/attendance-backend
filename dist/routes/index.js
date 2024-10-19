@@ -1,0 +1,24 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const user_route_1 = __importDefault(require("./user.route"));
+const roles_route_1 = __importDefault(require("./roles.route"));
+const plan_route_1 = __importDefault(require("./plan.route"));
+const payment_route_1 = __importDefault(require("./payment.route"));
+const organization_route_1 = __importDefault(require("./organization.route"));
+const office_route_1 = __importDefault(require("./office.route"));
+const employee_route_1 = __importDefault(require("./employee.route"));
+const attendance_route_1 = __importDefault(require("./attendance.route"));
+const appRouter = (0, express_1.Router)();
+appRouter.use("/org", organization_route_1.default);
+appRouter.use("/office", office_route_1.default);
+appRouter.use("/role", roles_route_1.default);
+appRouter.use("/plan", plan_route_1.default);
+appRouter.use("/payment", payment_route_1.default);
+appRouter.use("/user", user_route_1.default);
+appRouter.use("/employee", employee_route_1.default);
+appRouter.use("/attendance", attendance_route_1.default);
+exports.default = appRouter;
