@@ -7,6 +7,7 @@ import orgRouter from "./organization.route";
 import officeRouter from "./office.route";
 import employeeRouter from "./employee.route";
 import attendanceRouter from "./attendance.route";
+import authRouter from "./auth.route";
 
 
 const appRouter = Router();
@@ -18,6 +19,7 @@ appRouter.use("/plan", planRouter);
 appRouter.use("/payment", paymentRouter);
 appRouter.use("/user", userRouter);
 appRouter.use("/employee", employeeRouter);
+appRouter.use("/auth", authRouter);
 
 appRouter.use("/attendance", attendanceRouter);
 

@@ -1,40 +1,40 @@
 import { Op, col, fn } from "sequelize";
-import db from "../helpers/db.helper.js";
-import { request, Request, Response } from "express";
-import models from "../models/index.js";
-import handleError from "../helpers/handleError.helper.js";
+import db from "../helpers/db.helper";
+import { request, Request, RequestHandler, Response } from "express";
+import models from "../models/index";
+import handleError from "../helpers/handleError.helper";
 
-export const getAllOffices = async (req: Request, res: Response): Promise<Response> => {
+export const getAllOffices:RequestHandler = async (req: Request, res: Response) => {
     try {
         const allOffices = await models.Offices.findAll({});
         
         if (!allOffices || allOffices.length === 0) {
-            return res.status(404).json({ status: "Failure", message: "No offices found" });
+            res.status(404).json({ status: "Failure", message: "No offices found" });
         }
         
-        return res.status(200).json({ status: "Success", result: allOffices });
+        res.status(200).json({ status: "Success", result: allOffices });
     } catch (error) {
-        return handleError(res, error, "Error fetching all offices");
+        handleError(res, error, "Error fetching all offices");
     }
 };
 
-export const getOffice = async (req: Request, res: Response): Promise<Response> => {
+export const getOffice:RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
         const office = await models.Offices.findOne({ where: { office_id: id } });
 
         if (!office) {
-            return res.status(404).json({ status: "Failure", message: "Office not found" });
+            res.status(404).json({ status: "Failure", message: "Office not found" });
         }
 
-        return res.status(200).json({ status: "Success", result: office });
+        res.status(200).json({ status: "Success", result: office });
     } catch (error) {
-        return handleError(res, error, "Error fetching office");
+        handleError(res, error, "Error fetching office");
     }
 };
 
-export const createOffice = async (req: Request, res: Response): Promise<Response> => {
+export const createOffice:RequestHandler = async (req: Request, res: Response) => {
     const {
         office_name,
         office_location,
@@ -44,6 +44,7 @@ export const createOffice = async (req: Request, res: Response): Promise<Respons
         user_email,
         user_password,
         user_birthday,
+        user_age
     } = req.body;
 
     try {
@@ -67,19 +68,20 @@ export const createOffice = async (req: Request, res: Response): Promise<Respons
             user_birthday,
             role_id,
             org_id,
+            user_age
         });
 
         if (!newOffice) {
-            return res.status(400).json({ status: "Failure", message: "Error creating office" });
+            res.status(400).json({ status: "Failure", message: "Error creating office" });
         }
 
-        return res.status(201).json({ status: "Success", message: "Office created successfully" });
+        res.status(201).json({ status: "Success", message: "Office created successfully" });
     } catch (error) {
-        return handleError(res, error, "Error creating office");
+        handleError(res, error, "Error creating office");
     }
 };
 
-export const updateOffice = async (req: Request, res: Response): Promise<Response> => {
+export const updateOffice:RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
     const {
         office_name,
@@ -100,16 +102,16 @@ export const updateOffice = async (req: Request, res: Response): Promise<Respons
         );
 
         if (isOrgUpdated === 0) {
-            return res.status(404).json({ status: "Failure", message: "Office not found or no changes made" });
+            res.status(404).json({ status: "Failure", message: "Office not found or no changes made" });
         }
 
-        return res.json({ status: "Success", message: "Office updated successfully" });
+        res.json({ status: "Success", message: "Office updated successfully" });
     } catch (error) {
-        return handleError(res, error, "Error updating office");
+        handleError(res, error, "Error updating office");
     }
 };
 
-export const getOfficesByOrgId = async (req: Request, res: Response): Promise<Response> => {
+export const getOfficesByOrgId:RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
@@ -125,37 +127,37 @@ export const getOfficesByOrgId = async (req: Request, res: Response): Promise<Re
         });
 
         if (offices.length === 0) {
-            return res.status(404).json({
+            res.status(404).json({
                 status: "404 Not Found",
                 message: "No offices found for the provided org_id",
             });
         }
 
-        return res.status(200).json({
+        res.status(200).json({
             status: "Success",
             data: offices,
         });
     } catch (error) {
         console.error("Error fetching offices:", error);
-        return handleError(res, error, "Error fetching offices");
+        handleError(res, error, "Error fetching offices");
     }
 };
 
-export const deleteOffice = async (req: Request, res: Response): Promise<Response> => {
+export const deleteOffice:RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
         const office = await models.Offices.findOne({ where: { office_id: id } });
 
         if (!office) {
-            return res.status(404).json({ status: "Failure", message: "Office not found" });
+            res.status(404).json({ status: "Failure", message: "Office not found" });
         }
 
         await models.Offices.destroy({ where: { office_id: id } });
 
-        return res.json({ status: "Success", message: "Office deleted successfully" });
+        res.json({ status: "Success", message: "Office deleted successfully" });
     } catch (error) {
-        return handleError(res, error, "Error deleting office");
+        handleError(res, error, "Error deleting office");
     }
 };
 

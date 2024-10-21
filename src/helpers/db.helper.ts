@@ -20,6 +20,7 @@ const env: Env = {
   HOST: process.env.HOST as string
 };
 
+
 // Initialize Sequelize with the required options
 const sequelize = new Sequelize(
   env.DATABASE_NAME,

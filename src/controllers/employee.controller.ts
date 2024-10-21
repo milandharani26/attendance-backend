@@ -1,25 +1,25 @@
 import { Op, col, fn } from "sequelize";
-import db from "../helpers/db.helper.js";
-import { request, Request, Response } from "express";
-import models from "../models/index.js";
-import handleError from "../helpers/handleError.helper.js";
+import db from "../helpers/db.helper";
+import { request, Request, RequestHandler, Response } from "express";
+import models from "../models/index";
+import handleError from "../helpers/handleError.helper";
 
 
-export const getAllEmployees = async (req: Request, res: Response): Promise<Response> => {
+export const getAllEmployees:RequestHandler = async (req: Request, res: Response) => {
     try {
         const allEmployees = await models.Employees.findAll({});
 
         if (!allEmployees || allEmployees.length === 0) {
-            return res.status(404).json({ status: "Failure", message: "No employees found" });
+            res.status(404).json({ status: "Failure", message: "No employees found" });
         }
 
-        return res.status(200).json({ status: "Success", result: allEmployees });
+        res.status(200).json({ status: "Success", result: allEmployees });
     } catch (error) {
-        return handleError(res, error, "Error fetching all employees");
+        handleError(res, error, "Error fetching all employees");
     }
 };
 
-export const getEmployees = async (req: Request, res: Response): Promise<Response> => {
+export const getEmployees:RequestHandler = async (req: Request, res: Response) => {
     const { office_id, org_id, emp_id } = req.query; // Extract office_id or org_id from query parameters
 
     try {
@@ -39,24 +39,24 @@ export const getEmployees = async (req: Request, res: Response): Promise<Respons
 
         // If no employees found
         if (employees.length === 0) {
-            return res.status(404).json({
+            res.status(404).json({
                 status: "404 Not Found",
                 message: "No employees found for the provided office_id or org_id",
             });
         }
 
-        // Return the found employees
-        return res.status(200).json({
+        // the found employees
+        res.status(200).json({
             status: "Success",
             data: employees,
         });
     } catch (error) {
         console.error("Error fetching employees:", error);
-        return handleError(res, error, "Error fetching employees");
+        handleError(res, error, "Error fetching employees");
     }
 };
 
-export const createEmployee = async (req: Request, res: Response): Promise<Response> => {
+export const createEmployee:RequestHandler = async (req: Request, res: Response) => {
     const {
         office_id,
         emp_department,
@@ -67,6 +67,7 @@ export const createEmployee = async (req: Request, res: Response): Promise<Respo
         user_email,
         user_password,
         user_birthday,
+        user_age
     } = req.body;
 
     try {
@@ -83,10 +84,11 @@ export const createEmployee = async (req: Request, res: Response): Promise<Respo
             user_birthday,
             org_id,
             role_id,
+            user_age
         });
 
         if (!newUser) {
-            return res.status(400).json({ status: "Failure", message: "Error creating user" });
+            res.status(400).json({ status: "Failure", message: "Error creating user" });
         }
 
         const userId = newUser.dataValues.user_id;
@@ -101,16 +103,16 @@ export const createEmployee = async (req: Request, res: Response): Promise<Respo
         });
 
         if (!newEmployee) {
-            return res.status(400).json({ status: "Failure", message: "Error creating employee" });
+            res.status(400).json({ status: "Failure", message: "Error creating employee" });
         }
 
-        return res.status(201).json({ status: "Success", message: "Employee created successfully" });
+        res.status(201).json({ status: "Success", message: "Employee created successfully" });
     } catch (error) {
-        return handleError(res, error, "Error creating employee");
+        handleError(res, error, "Error creating employee");
     }
 };
 
-export const updateEmployee = async (req: Request, res: Response): Promise<Response> => {
+export const updateEmployee:RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
     const {
         user_id,
@@ -135,29 +137,29 @@ export const updateEmployee = async (req: Request, res: Response): Promise<Respo
         );
 
         if (isEmployeeUpdated === 0) {
-            return res.status(404).json({ status: "Failure", message: "Employee not found or no changes made" });
+            res.status(404).json({ status: "Failure", message: "Employee not found or no changes made" });
         }
 
-        return res.json({ status: "Success", message: "Employee updated successfully" });
+        res.json({ status: "Success", message: "Employee updated successfully" });
     } catch (error) {
-        return handleError(res, error, "Error updating employee");
+        handleError(res, error, "Error updating employee");
     }
 };
 
-export const deleteEmployee = async (req: Request, res: Response): Promise<Response> => {
+export const deleteEmployee:RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
         const employee = await models.Employees.findOne({ where: { emp_id: id } });
 
         if (!employee) {
-            return res.status(404).json({ status: "Failure", message: "Employee not found" });
+            res.status(404).json({ status: "Failure", message: "Employee not found" });
         }
 
         await models.Employees.destroy({ where: { emp_id: id } });
 
-        return res.json({ status: "Success", message: "Employee deleted successfully" });
+        res.json({ status: "Success", message: "Employee deleted successfully" });
     } catch (error) {
-        return handleError(res, error, "Error deleting employee");
+        handleError(res, error, "Error deleting employee");
     }
 };

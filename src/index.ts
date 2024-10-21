@@ -7,6 +7,9 @@ dotenv.config()
 
 const port = 3000;
 
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json());
+
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.json({
     status: "Successfully started type script",
