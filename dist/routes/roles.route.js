@@ -1,8 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const role_controller_1 = require("../controllers/role.controller");
 const roleRouter = (0, express_1.Router)();
-roleRouter.get("/", (req, res) => {
-    console.log("this first role route");
-});
+roleRouter.get("/", role_controller_1.getAllRoles);
+roleRouter.post("/", role_controller_1.createRole);
+roleRouter.get("/:id", role_controller_1.getRole);
+roleRouter.put("/:id", role_controller_1.updateRole);
+roleRouter.delete("/:id", role_controller_1.deleteRole);
 exports.default = roleRouter;

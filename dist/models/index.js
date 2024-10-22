@@ -12,6 +12,8 @@ const office_model_1 = __importDefault(require("./office.model"));
 const employee_model_1 = __importDefault(require("./employee.model"));
 const configuration_model_1 = __importDefault(require("./configuration.model"));
 const attendance_model_1 = __importDefault(require("./attendance.model"));
+const permission_model_1 = __importDefault(require("./permission.model"));
+const rolePermission_model_1 = __importDefault(require("./rolePermission.model"));
 const models = {
     Users: user_model_1.default,
     Roles: role_model_1.default,
@@ -21,6 +23,8 @@ const models = {
     Offices: office_model_1.default,
     Employees: employee_model_1.default,
     Configuration: configuration_model_1.default,
-    Attendance: attendance_model_1.default
+    Attendance: attendance_model_1.default,
+    Permissions: permission_model_1.default,
+    RolePermissions: rolePermission_model_1.default
 };
 exports.default = models;

@@ -13,19 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteRole = exports.updateRole = exports.createRole = exports.getRole = exports.getAllRoles = void 0;
-const index_js_1 = __importDefault(require("../models/index.js"));
-const handleError_helper_js_1 = __importDefault(require("../helpers/handleError.helper.js"));
+const handleError_helper_1 = __importDefault(require("../helpers/handleError.helper"));
+const index_1 = __importDefault(require("../models/index"));
 // Get all roles
 const getAllRoles = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const allRoles = yield index_js_1.default.Roles.findAll({});
+        const allRoles = yield index_1.default.Roles.findAll({});
         if (!allRoles || allRoles.length === 0) {
-            return res.status(404).json({ status: "Failure", message: "No roles found" });
+            res.status(404).json({ status: "Failure", message: "No roles found" });
         }
-        return res.json({ status: "Success", result: allRoles });
+        res.json({ status: "Success", result: allRoles });
     }
     catch (error) {
-        return (0, handleError_helper_js_1.default)(res, error, "Failed to retrieve roles");
+        (0, handleError_helper_1.default)(res, error, "Failed to retrieve roles");
     }
 });
 exports.getAllRoles = getAllRoles;
@@ -33,14 +33,14 @@ exports.getAllRoles = getAllRoles;
 const getRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const role = yield index_js_1.default.Roles.findOne({ where: { role_id: id } });
+        const role = yield index_1.default.Roles.findOne({ where: { role_id: id } });
         if (!role) {
-            return res.status(404).json({ status: "Failure", message: "Role not found" });
+            res.status(404).json({ status: "Failure", message: "Role not found" });
         }
-        return res.json({ status: "Success", result: role });
+        res.json({ status: "Success", result: role });
     }
     catch (error) {
-        return (0, handleError_helper_js_1.default)(res, error, "Failed to retrieve role");
+        (0, handleError_helper_1.default)(res, error, "Failed to retrieve role");
     }
 });
 exports.getRole = getRole;
@@ -48,17 +48,17 @@ exports.getRole = getRole;
 const createRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { role_name, role_code } = req.body;
-        const newRole = yield index_js_1.default.Roles.create({
+        const newRole = yield index_1.default.Roles.create({
             role_name,
             role_code,
         });
         if (!newRole) {
-            return res.status(400).json({ status: "Failure", message: "Failed to create role" });
+            res.status(400).json({ status: "Failure", message: "Failed to create role" });
         }
-        return res.status(201).json({ status: "Success", message: "Role created successfully" });
+        res.status(201).json({ status: "Success", message: "Role created successfully" });
     }
     catch (error) {
-        return (0, handleError_helper_js_1.default)(res, error, "Failed to create role");
+        (0, handleError_helper_1.default)(res, error, "Failed to create role");
     }
 });
 exports.createRole = createRole;
@@ -67,14 +67,14 @@ const updateRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const { id } = req.params;
         const { role_name, role_code } = req.body;
-        const [isRoleUpdated] = yield index_js_1.default.Roles.update({ role_name, role_code }, { where: { role_id: id } });
+        const [isRoleUpdated] = yield index_1.default.Roles.update({ role_name, role_code }, { where: { role_id: id } });
         if (!isRoleUpdated) {
-            return res.status(404).json({ status: "Failure", message: "Role not found or update failed" });
+            res.status(404).json({ status: "Failure", message: "Role not found or update failed" });
         }
-        return res.json({ status: "Success", message: "Role updated successfully" });
+        res.json({ status: "Success", message: "Role updated successfully" });
     }
     catch (error) {
-        return (0, handleError_helper_js_1.default)(res, error, "Failed to update role");
+        (0, handleError_helper_1.default)(res, error, "Failed to update role");
     }
 });
 exports.updateRole = updateRole;
@@ -82,15 +82,15 @@ exports.updateRole = updateRole;
 const deleteRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const role = yield index_js_1.default.Roles.findOne({ where: { role_id: id } });
+        const role = yield index_1.default.Roles.findOne({ where: { role_id: id } });
         if (!role) {
-            return res.status(404).json({ status: "Failure", message: "Role not found" });
+            res.status(404).json({ status: "Failure", message: "Role not found" });
         }
-        yield index_js_1.default.Roles.destroy({ where: { role_id: id } });
-        return res.json({ status: "Success", message: "Role deleted successfully" });
+        yield index_1.default.Roles.destroy({ where: { role_id: id } });
+        res.json({ status: "Success", message: "Role deleted successfully" });
     }
     catch (error) {
-        return (0, handleError_helper_js_1.default)(res, error, "Failed to delete role");
+        (0, handleError_helper_1.default)(res, error, "Failed to delete role");
     }
 });
 exports.deleteRole = deleteRole;

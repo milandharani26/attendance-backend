@@ -9,6 +9,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 const port = 3000;
+app.use(express_1.default.urlencoded({ extended: false }));
+app.use(express_1.default.json());
 app.get("/", (req, res, next) => {
     res.json({
         status: "Successfully started type script",

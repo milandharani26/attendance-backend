@@ -8,31 +8,50 @@ const uuid_1 = require("uuid");
 const db_helper_1 = __importDefault(require("../helpers/db.helper"));
 const role_model_1 = __importDefault(require("./role.model"));
 const organization_model_1 = __importDefault(require("./organization.model"));
-const Users = db_helper_1.default.sequelize.define('users', {
+// Define the model class that extends Sequelize's Model class
+class Users extends sequelize_1.Model {
+}
+// Initialize the Users model
+Users.init({
     user_id: {
         type: sequelize_1.DataTypes.UUID,
         primaryKey: true,
-        defaultValue: () => (0, uuid_1.v4)()
+        defaultValue: () => (0, uuid_1.v4)(),
     },
     user_name: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     user_email: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     user_password: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+    },
+    user_age: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     user_birthday: {
         type: sequelize_1.DataTypes.DATE,
+        allowNull: false,
     },
     role_id: {
         type: sequelize_1.DataTypes.UUID,
+        allowNull: false,
     },
     org_id: {
         type: sequelize_1.DataTypes.UUID,
-    }
+        allowNull: false,
+    },
+}, {
+    sequelize: db_helper_1.default.sequelize, // Pass the sequelize instance
+    modelName: 'Users', // Model name
+    tableName: 'users', // Optional: explicitly specify the table name if it differs
 });
+// Define associations
 Users.belongsTo(role_model_1.default, { foreignKey: 'role_id' });
 role_model_1.default.hasMany(Users, { foreignKey: 'role_id' });
 Users.belongsTo(organization_model_1.default, { foreignKey: 'org_id' });
