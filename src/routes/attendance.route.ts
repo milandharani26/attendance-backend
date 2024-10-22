@@ -3,13 +3,9 @@ import { deleteAttendance, getAllAttendance, updateAttendance } from "../control
 
 const attendanceRouter = Router()
 
-attendanceRouter.get("/", (req, res)=>{
-    console.log("this first plan route")
-})
-
-// attendanceRouter.get("/", getAllAttendance)
-// attendanceRouter.put("/:id", updateAttendance)
-// attendanceRouter.delete("/:id", deleteAttendance)
+attendanceRouter.get("/", getAllAttendance)
+attendanceRouter.put("/:id", updateAttendance)
+attendanceRouter.delete("/:id", deleteAttendance)
 
 
 export default attendanceRouter

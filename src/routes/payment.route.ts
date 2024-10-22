@@ -3,15 +3,11 @@ import { createPayments, deletePayment, getAllPayments, getPayment, updatePaymen
 
 const paymentRouter = Router()
 
-paymentRouter.get("/", (req, res)=>{
-    console.log("this first plan route")
-})
-
-// paymentRouter.get("/", getAllPayments)
-// paymentRouter.post("/", createPayments)
-// paymentRouter.get("/:id", getPayment)
-// paymentRouter.put("/:id", updatePayment)
-// paymentRouter.delete("/:id", deletePayment)
+paymentRouter.get("/", getAllPayments)
+paymentRouter.post("/", createPayments)
+paymentRouter.get("/:id", getPayment)
+paymentRouter.put("/:id", updatePayment)
+paymentRouter.delete("/:id", deletePayment)
 
 
 export default paymentRouter

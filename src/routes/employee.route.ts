@@ -3,15 +3,11 @@ import { createEmployee, deleteEmployee, getAllEmployees, getEmployees, updateEm
 
 const employeeRouter = Router()
 
-employeeRouter.get("/", (req, res)=>{
-    console.log("this first plan route")
-})
-
-// employeeRouter.get("/", getAllEmployees)
-// employeeRouter.post("/", createEmployee)
-// employeeRouter.get("/filter", getEmployees)
-// employeeRouter.put("/:id", updateEmployee)
-// employeeRouter.delete("/:id", deleteEmployee)
+employeeRouter.get("/", getAllEmployees)
+employeeRouter.post("/", createEmployee)
+employeeRouter.get("/filter", getEmployees)
+employeeRouter.put("/:id", updateEmployee)
+employeeRouter.delete("/:id", deleteEmployee)
 
 
 export default employeeRouter
