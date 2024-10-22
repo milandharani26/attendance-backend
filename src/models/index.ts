@@ -7,6 +7,8 @@ import Offices from "./office.model"
 import Employees from "./employee.model"
 import Configuration from "./configuration.model"
 import Attendance from "./attendance.model"
+import Permissions from "./permission.model"
+import RolePermissions from "./rolePermission.model"
 
 const models = {
     Users,
@@ -17,7 +19,9 @@ const models = {
     Offices,
     Employees,
     Configuration,
-    Attendance
+    Attendance,
+    Permissions,
+    RolePermissions
 }
 
 export default models

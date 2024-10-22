@@ -86,3 +86,4 @@ export const deleteAttendance:RequestHandler = async (req: Request, res: Respons
         handleError(res, error, "Error deleting attendance");
     }
 };
+

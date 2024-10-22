@@ -17,7 +17,7 @@ export const authenticateToken = async (
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
-  // Check if the token is provided
+  // Check if the token is not provided
   if (!token) {
     res.status(401).json({
       status: "false",
