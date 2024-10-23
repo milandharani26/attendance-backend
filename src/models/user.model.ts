@@ -4,22 +4,24 @@ import db from "../helpers/db.helper";
 import Roles from "./role.model";
 import Organizations from "./organization.model";
 
-// Define the attributes for the Users model
+// Define User attributes with required and optional fields
 interface UserAttributes {
     user_id: string;
     user_name: string;
     user_email: string;
     user_password: string;
-    user_age: string;
     user_birthday: Date;
     role_id: string;
     org_id: string;
+    user_age : string
+    resetOtp: string | null;
+    resetOtpExpires: string | null;
 }
 
-// Define creation attributes to allow optional fields during creation (like user_id, which will be auto-generated)
+// Optional fields for model creation (user_id is automatically generated)
 interface UserCreationAttributes extends Optional<UserAttributes, 'user_id'> {}
 
-// Define the model class that extends Sequelize's Model class
+// Define the User model class
 class Users extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
     public user_id!: string;
     public user_name!: string;
@@ -29,19 +31,21 @@ class Users extends Model<UserAttributes, UserCreationAttributes> implements Use
     public user_birthday!: Date;
     public role_id!: string;
     public org_id!: string;
+    public resetOtp!: string | null;
+    public resetOtpExpires!: string | null;
 
-    // Timestamps are optional, depending on whether they're used
+    // Timestamps (optional)
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
-// Initialize the Users model
+// Initialize the model definition
 Users.init(
     {
         user_id: {
             type: DataTypes.UUID,
             primaryKey: true,
-            defaultValue: () => uuidv4(),
+            defaultValue: uuidv4
         },
         user_name: {
             type: DataTypes.STRING,
@@ -51,11 +55,11 @@ Users.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        user_password: {
+        user_age: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        user_age: {
+        user_password: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -71,11 +75,20 @@ Users.init(
             type: DataTypes.UUID,
             allowNull: false,
         },
+        resetOtp: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        resetOtpExpires: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
     },
     {
-        sequelize: db.sequelize, // Pass the sequelize instance
-        modelName: 'Users',      // Model name
-        tableName: 'users',      // Optional: explicitly specify the table name if it differs
+        sequelize: db.sequelize, // pass the sequelize instance
+        modelName: 'Users',
+        tableName: 'users',
+        timestamps: true, // to enable createdAt and updatedAt
     }
 );
 

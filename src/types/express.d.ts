@@ -6,5 +6,8 @@ export interface CustomRequest extends Request {
 }
 
 export interface CustomRequestAuth extends Request {
-  user?: object; // Assuming userId is a string
+  user?: {
+    userId : string,
+    roleId : string
+  }; // Assuming userId is a string
 }

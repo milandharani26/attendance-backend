@@ -31,7 +31,6 @@ export const authenticateToken = async (
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
     // Log the decoded information for debugging
-    console.log("Decoded token:", decoded);
 
     // Check if the decoded payload contains userId
     if (!decoded.userId) {
@@ -66,8 +65,10 @@ export const authenticateToken = async (
     // Attach user data to the request for further processing in the next middleware
     req.user = {
       userId: user.user_id,
-      role: user.role_id,
+      roleId: user.role_id,
     };
+
+    console.log(req.user, "777777777777777777777777")
 
     // Proceed to the next middleware or route handler
     next();

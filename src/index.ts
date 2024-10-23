@@ -1,11 +1,14 @@
 import express, { NextFunction, Request, Response } from "express";
 import appRouter from "./routes";
 import dotenv from 'dotenv'
+import cors from "cors";
 
 const app = express();
 dotenv.config()
 
 const port = 3000;
+
+app.use(cors())
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json());
