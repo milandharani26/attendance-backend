@@ -8,6 +8,8 @@ import handleError from "../helpers/handleError.helper";
 export const getAllOrganizations:RequestHandler = async (req: Request, res: Response)=> {
     try {
         const allOrganizations = await models.Organizations.findAll({});
+
+        console.log(allOrganizations)
         
         if (!allOrganizations || allOrganizations.length === 0) {
             res.status(404).json({ status: "Failure", message: "No organizations found" });

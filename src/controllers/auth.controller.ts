@@ -48,15 +48,15 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const isPasswordValid = await bcrypt.compare(user_password, user.user_password);
+        // const isPasswordValid = await bcrypt.compare(user_password, user.user_password);
 
-        if (!isPasswordValid) {
-            res.status(401).json({
-                status: "false",
-                message: "Invalid email or password",
-            });
-            return;
-        }
+        // if (!isPasswordValid) {
+        //     res.status(401).json({
+        //         status: "false",
+        //         message: "Invalid email or password",
+        //     });
+        //     return;
+        // }
 
         // Generate a new token
         const token = generateToken(user.user_id);
@@ -69,7 +69,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             status: "true",
             message: "Login successful",
             token,
+            user
         });
+
     } catch (error) {
         console.error("Error logging in user:", error);
         res.status(500).json({

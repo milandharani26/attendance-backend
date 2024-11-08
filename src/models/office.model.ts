@@ -2,6 +2,7 @@ import db from "../helpers/db.helper"
 import { DataTypes, UUIDV4 } from "sequelize"
 import { v4 as uuidv4 } from 'uuid'
 import Organizations from "./organization.model"
+import Users from "./user.model"
 
 const Offices = db.sequelize.define(
     'office',
@@ -22,6 +23,9 @@ const Offices = db.sequelize.define(
         },
         org_id: {
             type: DataTypes.UUID,
+        },
+        user_id: {
+            type: DataTypes.UUID,
         }
 
     }
@@ -29,5 +33,8 @@ const Offices = db.sequelize.define(
 
 Offices.belongsTo(Organizations, { foreignKey: "org_id" })
 Organizations.hasMany(Offices, { foreignKey: "org_id" })
+
+Offices.belongsTo(Users, { foreignKey: "user_id" })
+Users.hasMany(Offices, { foreignKey: "user_id" })
 
 export default Offices   

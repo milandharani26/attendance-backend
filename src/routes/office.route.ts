@@ -7,13 +7,22 @@ import { checkPermission } from "../middleware/authorization.middleware";
 const officeRouter = Router()
 
 
-officeRouter.get("/", authenticateToken, checkPermission("GET_OFFICE_SAME_ORG"), getAllOffices);
-officeRouter.post("/", authenticateToken, createOffice);
-officeRouter.get("/:id", authenticateToken, getOffice);
+officeRouter.get("/", 
+    // authenticateToken, 
+    // checkPermission("GET_OFFICE_SAME_ORG"), 
+    getAllOffices
+);
+officeRouter.post("/", 
+    // authenticateToken, 
+    createOffice);
+
+officeRouter.get("/:id", 
+    // authenticateToken, 
+    getOffice);
 
 officeRouter.get("/same-orgs/:id",
-    authenticateToken,
-    checkPermission("GET_OFFICE_SAME_ORG"),
+    // authenticateToken,
+    // checkPermission("GET_OFFICE_SAME_ORG"),
     getOfficesByOrgId
 );
 

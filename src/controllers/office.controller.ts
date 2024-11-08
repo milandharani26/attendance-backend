@@ -1,28 +1,49 @@
-import { Op, col, fn } from "sequelize";
+import { Op, Sequelize, col, fn } from "sequelize";
 import db from "../helpers/db.helper";
 import { request, Request, RequestHandler, Response } from "express";
 import models from "../models/index";
 import handleError from "../helpers/handleError.helper";
+import sequelize from "sequelize";
 
-export const getAllOffices:RequestHandler = async (req: Request, res: Response) => {
+export const getAllOffices: RequestHandler = async (req: Request, res: Response) => {
     try {
         const allOffices = await models.Offices.findAll({});
-        
+
         if (!allOffices || allOffices.length === 0) {
             res.status(404).json({ status: "Failure", message: "No offices found" });
         }
-        
+
         res.status(200).json({ status: "Success", result: allOffices });
     } catch (error) {
         handleError(res, error, "Error fetching all offices");
     }
 };
 
-export const getOffice:RequestHandler = async (req: Request, res: Response) => {
+export const getOffice: RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const office = await models.Offices.findOne({ where: { office_id: id } });
+        const office = await models.Offices.findOne({
+            where: { office_id: id },
+            attributes: [
+                [Sequelize.col('User.user_name'), 'userName'],
+                [Sequelize.col('User.user_id'), 'userId'],
+                [Sequelize.col('User.user_email'), 'userEmail'],
+                [Sequelize.col('User.user_password'), 'userPassword'],
+                [Sequelize.col('User.user_birthday'), 'userBirthday'],
+                [Sequelize.col('User.user_age'), 'userAge'],
+                ["office_name", "officeName"],
+                ["office_location", "officeLocation"],
+                ["office_email", "officeEmail"],
+            ],
+            include: [
+                {
+                    model: models.Users,
+                    attributes: []
+                },
+            ],
+            raw: true
+        });
 
         if (!office) {
             res.status(404).json({ status: "Failure", message: "Office not found" });
@@ -34,7 +55,7 @@ export const getOffice:RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-export const createOffice:RequestHandler = async (req: Request, res: Response) => {
+export const createOffice: RequestHandler = async (req: Request, res: Response) => {
     const {
         office_name,
         office_location,
@@ -48,12 +69,7 @@ export const createOffice:RequestHandler = async (req: Request, res: Response) =
     } = req.body;
 
     try {
-        const newOffice = await models.Offices.create({
-            office_name,
-            office_location,
-            office_email,
-            org_id,
-        });
+
 
         const officeAdminRole = await models.Roles.findOne({
             where: { role_name: "officeAdmin" },
@@ -71,6 +87,14 @@ export const createOffice:RequestHandler = async (req: Request, res: Response) =
             user_age
         });
 
+        const newOffice = await models.Offices.create({
+            office_name,
+            office_location,
+            office_email,
+            org_id,
+            user_id: newUser.dataValues.user_id
+        });
+
         if (!newOffice) {
             res.status(400).json({ status: "Failure", message: "Error creating office" });
         }
@@ -81,14 +105,22 @@ export const createOffice:RequestHandler = async (req: Request, res: Response) =
     }
 };
 
-export const updateOffice:RequestHandler = async (req: Request, res: Response) => {
+export const updateOffice: RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
     const {
         office_name,
         office_location,
         office_email,
         org_id,
+        user_name,
+        user_email,
+        user_password,
+        user_birthday,
+        user_age,
+        user_id
     } = req.body;
+
+    const transaction = await db.sequelize.transaction()
 
     try {
         const [isOrgUpdated] = await models.Offices.update(
@@ -98,20 +130,34 @@ export const updateOffice:RequestHandler = async (req: Request, res: Response) =
                 office_email,
                 org_id,
             },
-            { where: { office_id: id } }
+            { where: { office_id: id }, transaction }
         );
+
+        const [isUserUpdated] = await models.Users.update({
+            user_name,
+            user_email,
+            user_password,
+            user_birthday,
+            user_age,
+        }, { where: { user_id }, transaction })
+
+
+        if (isUserUpdated === 0) {
+            res.status(404).json({ status: "Failure", message: "user not found or no changes made" })
+        }
 
         if (isOrgUpdated === 0) {
             res.status(404).json({ status: "Failure", message: "Office not found or no changes made" });
         }
-
+        transaction.commit()
         res.json({ status: "Success", message: "Office updated successfully" });
     } catch (error) {
+        transaction.rollback()
         handleError(res, error, "Error updating office");
     }
-};
+}
 
-export const getOfficesByOrgId:RequestHandler = async (req: Request, res: Response) => {
+export const getOfficesByOrgId: RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
@@ -143,7 +189,7 @@ export const getOfficesByOrgId:RequestHandler = async (req: Request, res: Respon
     }
 };
 
-export const deleteOffice:RequestHandler = async (req: Request, res: Response) => {
+export const deleteOffice: RequestHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {

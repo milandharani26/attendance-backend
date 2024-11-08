@@ -77,11 +77,11 @@ Users.init(
         },
         resetOtp: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         resetOtpExpires: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
     },
     {
