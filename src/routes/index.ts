@@ -8,6 +8,7 @@ import officeRouter from "./office.route";
 import employeeRouter from "./employee.route";
 import attendanceRouter from "./attendance.route";
 import authRouter from "./auth.route";
+import attendanceHistoryRouter from "./attendanceHistory.route";
 
 
 const appRouter = Router();
@@ -22,6 +23,7 @@ appRouter.use("/employee", employeeRouter);
 appRouter.use("/auth", authRouter);
 
 appRouter.use("/attendance", attendanceRouter);
+appRouter.use("/attendance-history", attendanceHistoryRouter);
 
 
 export default appRouter

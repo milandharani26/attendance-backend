@@ -3,6 +3,18 @@ import db from "../helpers/db.helper";
 import { request, Request, RequestHandler, Response } from "express";
 import models from "../models/index";
 import handleError from "../helpers/handleError.helper";
+import AWS from "aws-sdk"
+import dotenv from "dotenv"
+
+dotenv.config()
+
+// AWS.config.update({
+//     region: 'ap-south-1',
+//     accessKeyId: process.env.AWS_ACCESS_KEY, // Replace with your actual access key
+//     secretAccessKey: process.env.AWS_SECRETE_KEY // Replace with your actual secret key
+// });
+
+// const lambda = new AWS.Lambda();
 
 export const getAllEmployees: RequestHandler = async (
     req: Request,
@@ -28,6 +40,22 @@ export const getEmployees: RequestHandler = async (
     res: Response
 ) => {
     const { office_id, org_id, emp_id } = req.query; // Extract office_id or org_id from query parameters
+
+
+    // const params = {
+    //     FunctionName: 'createEmployee', // Replace with your Lambda function name
+    //     InvocationType: 'RequestResponse', // Can also use 'Event' for async invocation
+    //     Payload: JSON.stringify({ key1: 'value1', key2: 'value2' }) // Replace with your payload
+    // };
+
+
+    // const result = await lambda.invoke(params).promise();
+    // // Check if result.Payload exists and is a string before parsing
+    // if (result.Payload) {
+    //     console.log('Lambda response:', JSON.parse(result.Payload.toString()));
+    // } else {
+    //     console.log('Lambda response: No payload returned');
+    // }
 
     try {
         let whereClause: any = {}; // Declare whereClause as an object
@@ -117,6 +145,7 @@ export const createEmployee: RequestHandler = async (
             org_id,
             role_id,
             user_age,
+            office_id
         });
 
         if (!newUser) {
@@ -237,7 +266,6 @@ export const deleteEmployee: RequestHandler = async (
         handleError(res, error, "Error deleting employee");
     }
 };
-
 
 // Function to get count of employees by org_id or office_id
 export const employeeCount: RequestHandler = async (req: Request, res: Response) => {

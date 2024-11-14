@@ -9,6 +9,7 @@ import Configuration from "./configuration.model"
 import Attendance from "./attendance.model"
 import Permissions from "./permission.model"
 import RolePermissions from "./rolePermission.model"
+import AttendanceHistory from "./attendanceHistory.model"
 
 const models = {
     Users,
@@ -21,7 +22,8 @@ const models = {
     Configuration,
     Attendance,
     Permissions,
-    RolePermissions
+    RolePermissions,
+    AttendanceHistory
 }
 
 export default models

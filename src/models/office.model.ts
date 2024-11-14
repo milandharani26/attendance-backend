@@ -37,4 +37,7 @@ Organizations.hasMany(Offices, { foreignKey: "org_id" })
 Offices.belongsTo(Users, { foreignKey: "user_id" })
 Users.hasMany(Offices, { foreignKey: "user_id" })
 
+Users.belongsTo(Offices, { foreignKey: 'office_id' });
+Offices.hasMany(Users, { foreignKey: 'office_id' });
+
 export default Offices   

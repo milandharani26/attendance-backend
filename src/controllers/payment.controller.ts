@@ -1,5 +1,3 @@
-import { Op, col, fn } from "sequelize";
-import db from "../helpers/db.helper";
 import { request, Request, RequestHandler, Response } from "express";
 import models from "../models/index";
 import handleError from "../helpers/handleError.helper";
@@ -42,6 +40,7 @@ export const getPayment: RequestHandler = async (
   }
 };
 
+
 export const createPayments: RequestHandler = async (
   req: Request,
   res: Response
@@ -60,6 +59,7 @@ export const createPayments: RequestHandler = async (
     handleError(res, error, "Error creating payment");
   }
 };
+
 
 export const updatePayment: RequestHandler = async (
   req: Request,
@@ -116,9 +116,10 @@ export const deletePayment: RequestHandler = async (
   }
 };
 
+
 export const order: RequestHandler = async (
-    req: Request, 
-    res: Response
+  req: Request,
+  res: Response
 ) => {
   try {
     const razorpay = new Razorpay({
@@ -139,6 +140,7 @@ export const order: RequestHandler = async (
     handleError(res, error, "Error making order");
   }
 };
+
 
 export const validateOrder: RequestHandler = async (
   req: Request,

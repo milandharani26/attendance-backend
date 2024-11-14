@@ -85,6 +85,55 @@ export const getAllAttendance: RequestHandler = async (req: Request, res: Respon
     }
 };
 
+export const getAttendanceById: RequestHandler = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const attendance = await models.Attendance.findOne({
+            where: {
+                attendance_id: id,
+            },
+            attributes: [
+                [Sequelize.col('employee.emp_department'), 'empDepartment'],
+                [Sequelize.col('employee.emp_designation'), 'empDesignation'],
+                [Sequelize.col('employee.User.user_name'), 'userName'],
+                [Sequelize.col('employee.User.user_id'), 'userId'],
+                [Sequelize.col('employee.User.user_email'), 'userEmail'],
+                [Sequelize.col('employee.User.user_password'), 'userPassword'],
+                [Sequelize.col('employee.User.user_birthday'), 'userBirthday'],
+                [Sequelize.col('employee.User.user_age'), 'userAge'],
+                ['attendance_date', "attendanceDate"],
+                ['attendance_id', "id"],
+                ['entry_time', "entryTime"],
+                ['exit_time', "exitTime"],
+            ],
+            include: [
+                {
+                    model: models.Employees,
+                    attributes: [],
+                    include: [
+                        {
+                            model: models.Users,
+                            attributes: []
+                        }
+                    ]
+                },
+            ],
+            raw: true
+        });
+
+        if (!attendance) {
+            res.status(404).json({ status: "Failure", message: "Attendance record not found" });
+            return;
+        }
+
+        res.status(200).json({ status: "Success", result: attendance });
+    } catch (error) {
+        handleError(res, error, "Error fetching attendance record by ID");
+    }
+};
+
+
 export const createAttendance: RequestHandler = async (req: Request, res: Response) => {
     const { emp_id, attendance_date, entry_time, exit_time } = req.body;
 
@@ -95,6 +144,12 @@ export const createAttendance: RequestHandler = async (req: Request, res: Respon
             entry_time,
             exit_time,
         });
+
+        const addAttendanceStatus = await models.AttendanceHistory.create({
+            emp_id,
+            attendance_date,
+            attendance_status: "present"
+        })
 
         if (!newAttendance) {
             res.status(400).json({ status: "Failure", message: "Error creating attendance" });
@@ -110,19 +165,21 @@ export const updateAttendance: RequestHandler = async (req: Request, res: Respon
     const { id } = req.params;
     const { emp_id, attendance_date, entry_time, exit_time } = req.body;
 
+    // Filter only the fields that are defined
+    const updateData: Record<string, any> = {};
+    if (emp_id !== undefined) updateData.emp_id = emp_id;
+    if (attendance_date !== undefined) updateData.attendance_date = attendance_date;
+    if (entry_time !== undefined) updateData.entry_time = entry_time;
+    if (exit_time !== undefined) updateData.exit_time = exit_time;
+
     try {
-        const [isAttendanceUpdated] = await models.Attendance.update(
-            {
-                emp_id,
-                attendance_date,
-                entry_time,
-                exit_time,
-            },
-            { where: { attendance_id: id } }
-        );
+        const [isAttendanceUpdated] = await models.Attendance.update(updateData, {
+            where: { attendance_id: id },
+        });
 
         if (isAttendanceUpdated === 0) {
             res.status(404).json({ status: "Failure", message: "Attendance not found or no changes made" });
+            return
         }
 
         res.json({ status: "Success", message: "Attendance updated successfully" });
@@ -152,7 +209,7 @@ export const deleteAttendance: RequestHandler = async (req: Request, res: Respon
         handleError(res, error, "Error deleting attendance");
     }
 };
- 
+
 export const todayAttendanceCount: RequestHandler = async (req: Request, res: Response) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set time to the start of the day
@@ -175,3 +232,30 @@ export const todayAttendanceCount: RequestHandler = async (req: Request, res: Re
         handleError(res, error, "Error fetching today's attendance count");
     }
 };
+
+
+
+// export const updateAttendance: RequestHandler = async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const { emp_id, attendance_date, entry_time, exit_time } = req.body;
+
+//     try {
+//         const [isAttendanceUpdated] = await models.Attendance.update(
+//             {
+//                 emp_id,
+//                 attendance_date,
+//                 entry_time,
+//                 exit_time,
+//             },
+//             { where: { attendance_id: id } }
+//         );
+
+//         if (isAttendanceUpdated === 0) {
+//             res.status(404).json({ status: "Failure", message: "Attendance not found or no changes made" });
+//         }
+
+//         res.json({ status: "Success", message: "Attendance updated successfully" });
+//     } catch (error) {
+//         handleError(res, error, "Error updating attendance record");
+//     }
+// };
