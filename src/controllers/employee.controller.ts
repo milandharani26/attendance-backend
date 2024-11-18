@@ -5,6 +5,7 @@ import models from "../models/index";
 import handleError from "../helpers/handleError.helper";
 import AWS from "aws-sdk"
 import dotenv from "dotenv"
+import bcrypt from "bcrypt"
 
 dotenv.config()
 
@@ -41,7 +42,6 @@ export const getEmployees: RequestHandler = async (
 ) => {
     const { office_id, org_id, emp_id } = req.query; // Extract office_id or org_id from query parameters
 
-
     // const params = {
     //     FunctionName: 'createEmployee', // Replace with your Lambda function name
     //     InvocationType: 'RequestResponse', // Can also use 'Event' for async invocation
@@ -68,6 +68,7 @@ export const getEmployees: RequestHandler = async (
         } else if (emp_id) {
             whereClause.emp_id = emp_id;
         }
+
 
         // Fetch employees based on office_id or org_id
         const employees = await models.Employees.findAll({
@@ -100,6 +101,7 @@ export const getEmployees: RequestHandler = async (
                 status: "404 Not Found",
                 message: "No employees found for the provided office_id or org_id",
             });
+            return;
         }
 
         // the found employees
@@ -137,10 +139,12 @@ export const createEmployee: RequestHandler = async (
 
         const role_id = employeeRole?.dataValues.role_id;
 
+        const userPassword = await bcrypt.hash(user_password, 10)
+
         const newUser = await models.Users.create({
             user_name,
             user_email,
-            user_password,
+            user_password: userPassword,
             user_birthday,
             org_id,
             role_id,

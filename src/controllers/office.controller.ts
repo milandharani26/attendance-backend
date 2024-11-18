@@ -1,9 +1,10 @@
-import { Op, Sequelize, col, fn } from "sequelize";
+import { Op, Sequelize, col, fn, where } from "sequelize";
 import db from "../helpers/db.helper";
 import { request, Request, RequestHandler, Response } from "express";
 import models from "../models/index";
 import handleError from "../helpers/handleError.helper";
 import sequelize from "sequelize";
+import bcrypt from "bcrypt"
 
 export const getAllOffices: RequestHandler = async (req: Request, res: Response) => {
     try {
@@ -77,10 +78,12 @@ export const createOffice: RequestHandler = async (req: Request, res: Response) 
 
         const role_id = officeAdminRole?.dataValues.role_id;
 
+        const userPassword = await bcrypt.hash(user_password, 10)
+
         const newUser = await models.Users.create({
             user_name,
             user_email,
-            user_password,
+            user_password: userPassword,
             user_birthday,
             role_id,
             org_id,
@@ -94,6 +97,8 @@ export const createOffice: RequestHandler = async (req: Request, res: Response) 
             org_id,
             user_id: newUser.dataValues.user_id
         });
+
+        const updateOfficeUser = await models.Users.update({ office_id: newOffice.dataValues.office_id }, { where: { user_email } })
 
         if (!newOffice) {
             res.status(400).json({ status: "Failure", message: "Error creating office" });
